@@ -1,8 +1,43 @@
-﻿@{
+﻿@model List<Test>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+    .center-table {
+        margin-left: auto;
+        margin-right: auto;
+        border-collapse: separate;
+        border-spacing: 15px 10px;
+    }
+
+    .title-column {
+        text-align: left;
+    }
+
+    .table-cell {
+        padding: 0 15px;
+    }
+</style>
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h6 class="display-6">Welcome to our test portal!</h6>
+    <br>
+    <table class="center-table">
+        <thead>
+        </thead>
+        <tbody>
+            @foreach (var test in Model)
+            {
+                <tr>
+                    <td class="table-cell">@test.Id</td>
+                    <td class="table-cell title-column">@test.Title</td>
+                    <td class="table-cell">
+                        <a asp-controller="Test" asp-action="StartTest" asp-route-testId="@test.Id">Start</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
