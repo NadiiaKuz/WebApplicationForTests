@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using WebApplicationForTests.Models;
+using WebApplicationForTests.Models.ViewModels;
+using WebApplicationForTests.Services;
 
 namespace WebApplicationForTests.Controllers
 {
@@ -8,14 +9,19 @@ namespace WebApplicationForTests.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly TestService _testService;
+
+        public HomeController(TestService testService, ILogger<HomeController> logger)
         {
+            _testService = testService;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var tests = await _testService.GetAllAsync();
+
+            return View(tests);
         }
 
         public IActionResult Privacy()

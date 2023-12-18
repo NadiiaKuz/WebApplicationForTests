@@ -1,0 +1,13 @@
+﻿@model WebApplicationForTests.Models.ViewModels.TestResultViewModel
+
+@{
+    ViewData["Title"] = "Test Results";
+}
+
+<h2>Results for @Model.TestTitle</h2>
+
+<div>
+    <p>Your score: @Model.Score</p>
+</div>
+
+<a asp-action="Index" asp-controller="Test">Take another test</a>

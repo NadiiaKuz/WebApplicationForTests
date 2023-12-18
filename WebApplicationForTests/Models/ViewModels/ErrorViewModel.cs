@@ -1,4 +1,4 @@
-namespace WebApplicationForTests.Models
+namespace WebApplicationForTests.Models.ViewModels
 {
     public class ErrorViewModel
     {
