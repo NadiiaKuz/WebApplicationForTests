@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApplicationForTests.Database.Interfaces;
 using WebApplicationForTests.Models;
 
 namespace WebApplicationForTests.Database

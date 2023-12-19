@@ -2,8 +2,7 @@
 {
     public class TestResultViewModel
     {
-        public int TestId { get; set; }
         public string TestTitle { get; set; }
-        public int Score { get; set; }
+        public decimal Score { get; set; }
     }
 }
