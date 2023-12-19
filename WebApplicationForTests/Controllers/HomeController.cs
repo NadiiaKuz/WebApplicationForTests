@@ -15,18 +15,49 @@ namespace WebApplicationForTests.Controllers
 
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Test");
+            try
+            {
+                _logger.LogInformation("Navigating to the Test Index page.");
+                return RedirectToAction("Index", "Test");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while navigating to the Test Index page.");
+                return RedirectToAction("Error");
+            }
         }
 
         public IActionResult Privacy()
         {
-            return View();
+            try
+            {
+                _logger.LogInformation("Accessed Privacy page.");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred on the Privacy page.");
+                return RedirectToAction("Error");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            try
+            {
+                var errorViewModel = new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                };
+
+                return View(errorViewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred on the Error page.");
+                return View("CriticalError");
+            }
         }
     }
 }

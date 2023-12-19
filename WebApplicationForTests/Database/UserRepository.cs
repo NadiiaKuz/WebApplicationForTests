@@ -15,17 +15,6 @@ namespace WebApplicationForTests.Database
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<User?> GetByIdAsync(int id)
-        {
-
-
-            return await _context.Users
-                //.Include(x => x.Questions)
-                //.ThenInclude(x => x.Answers)
-                //.Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<User?> GetByLoginAsync(string login)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);

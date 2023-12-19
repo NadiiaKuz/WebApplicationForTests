@@ -18,24 +18,16 @@ namespace WebApplicationForTests.Helper
 
         private static void AddToCookie(HttpContext httpContext, List<TestResultBindingModel> results)
         {
+            var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(1) };
             string serializedTestData = JsonSerializer.Serialize(results);
 
-            httpContext.Response.Cookies.Append("TestResult", serializedTestData);
+            httpContext.Response.Cookies.Append("TestResult", serializedTestData, options);
         }
 
         public static List<TestResultBindingModel> GetResults(HttpContext httpContext)
         {
-            try
-            {
-
-                if (httpContext.Request.Cookies.TryGetValue("TestResult", out string jsonData))
-                {
-                    return JsonSerializer.Deserialize<List<TestResultBindingModel>>(jsonData);
-                }
-            }
-            catch (Exception ex)
-            { 
-            }
+            if (httpContext.Request.Cookies.TryGetValue("TestResult", out string jsonData))
+                return JsonSerializer.Deserialize<List<TestResultBindingModel>>(jsonData);
 
             return new List<TestResultBindingModel>();
         }
