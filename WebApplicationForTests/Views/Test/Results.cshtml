@@ -27,17 +27,17 @@
 
 
     @if (!User.Identity.IsAuthenticated)
-    {
+        {
             <div class="alert alert-warning" role="alert">
                 <p>You are not logged in. Please sign in or register to save your result.</p>
-
-                <form asp-controller="User" asp-action="SignIn" method="get">
-                    <button type="submit" class="btn btn-primary">Sign In</button>
-                </form>
-
-                <form asp-controller="User" asp-action="Register" method="get">
-                    <button type="submit" class="btn btn-secondary ml-2">Register</button>
-                </form>
+                <div>
+                    <form asp-controller="User" asp-action="SignIn" method="get" class="d-inline">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </form>
+                    <form asp-controller="User" asp-action="Register" method="get" class="d-inline">
+                        <button type="submit" class="btn btn-secondary ml-2">Register</button>
+                    </form>
+                </div>
             </div>
         }
     </div>

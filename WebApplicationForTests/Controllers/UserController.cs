@@ -12,10 +12,12 @@ namespace WebApplicationForTests.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
+        private readonly ILogger _logger;
 
-        public UserController(UserService userService)
+        public UserController(UserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -27,11 +29,15 @@ namespace WebApplicationForTests.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterBindingModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
             {
+                _logger.LogInformation("Attempting to register new user {Login}", model.Login);
                 var user = await _userService.GetUserAsync(model.Login);
 
-                if (user is not null)
+                if (user != null)
                 {
                     ModelState.AddModelError(nameof(model.Login), "Login is already in use");
                     return View(model);
@@ -40,7 +46,7 @@ namespace WebApplicationForTests.Controllers
                 byte[] salt = PasswordHasher.GenerateSalt();
                 string passwordHash = PasswordHasher.HashPasswordWithSalt(model.Password, salt);
 
-                var newUser = new User()
+                var newUser = new User
                 {
                     Login = model.Login,
                     PasswordHash = passwordHash,
@@ -48,16 +54,14 @@ namespace WebApplicationForTests.Controllers
                 };
 
                 await _userService.AddUserAsync(newUser);
+                _logger.LogInformation("User {Login} successfully registered", model.Login);
 
-                return RedirectToAction("SignIn", "User", new LoginBindingModel()
-                {
-                    Login = model.Login,
-                    Password = model.Password,
-                });
+                return RedirectToAction("SignIn", "User", new LoginBindingModel { Login = model.Login, Password = model.Password });
             }
-            else
+            catch (Exception ex)
             {
-                return View(model);
+                _logger.LogError(ex, "Error occurred while registering user {Login}", model.Login);
+                return RedirectToAction("Error", "Home");
             }
         }
 
@@ -69,33 +73,54 @@ namespace WebApplicationForTests.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn(LoginBindingModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
             {
+                _logger.LogInformation("User {Login} attempting to sign in.", model.Login);
                 var user = await _userService.GetUserAsync(model.Login);
 
-                if (user is not null)
+                if (user != null)
                 {
                     var isCorrectPassword = PasswordHasher.IsCorrectPassword(user, model.Password);
-                    
+
                     if (isCorrectPassword)
                     {
                         await SignInAsync(user);
+                        _logger.LogInformation("User {Login} successfully signed in.", model.Login);
 
-                        if(CookieHelper.GetResults(HttpContext).Any())
+                        if (CookieHelper.GetResults(HttpContext).Any())
                             return RedirectToAction("SaveLoginResults", "Test");
 
                         return RedirectToAction("Index", "Home");
                     }
                 }
+
                 ModelState.AddModelError("", "Wrong login or password");
+                _logger.LogWarning("Failed sign in attempt for user {Login}.", model.Login);
             }
-            
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during sign in for user {Login}.", model.Login);
+                ModelState.AddModelError("", "An error occurred while processing your request.");
+            }
+
             return View(model);
         }
 
         public async Task<IActionResult> SignOut()
         {
-            await HttpContext.SignOutAsync("CookieAuth");
+            try
+            {
+                await HttpContext.SignOutAsync("CookieAuth");
+                _logger.LogInformation("User signed out successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during sign out.");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
