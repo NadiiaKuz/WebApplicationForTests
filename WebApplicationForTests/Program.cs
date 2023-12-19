@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplicationForTests.Database;
+using WebApplicationForTests.Database.Interfaces;
 using WebApplicationForTests.Services;
 
 namespace WebApplicationForTests
@@ -15,14 +16,22 @@ namespace WebApplicationForTests
 
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<ITestRepository, TestRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IResultRepository, ResultRepository>();
             builder.Services.AddScoped<TestService>();
+            builder.Services.AddScoped<UserService>();
 
-            // Add services to the container.
+            builder.Services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth", options =>
+                {
+                    options.LoginPath = "/User/SignIn";
+                    options.LogoutPath = "/User/LogOut";
+                });
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");

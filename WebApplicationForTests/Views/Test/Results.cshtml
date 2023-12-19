@@ -4,10 +4,41 @@
     ViewData["Title"] = "Test Results";
 }
 
-<h2>Results for @Model.TestTitle</h2>
+<style>
+    .narrow-card {
+        max-width: 600px;
+        margin: auto;
+    }
 
-<div>
-    <p>Your score: @Model.Score</p>
+    .vertical-spacing {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="card narrow-card">
+        <div class="card-header">
+            <h4 class="vertical-spacing">@Model.TestTitle</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title vertical-spacing">Your Score: @((Model.Score * 100).ToString("F0")) % </h5>
+            <a class="btn btn-info vertical-spacing" asp-action="Index" asp-controller="Test">Take another test</a>
+        </div>
+
+
+    @if (!User.Identity.IsAuthenticated)
+    {
+            <div class="alert alert-warning" role="alert">
+                <p>You are not logged in. Please sign in or register to save your result.</p>
+
+                <form asp-controller="User" asp-action="SignIn" method="get">
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+
+                <form asp-controller="User" asp-action="Register" method="get">
+                    <button type="submit" class="btn btn-secondary ml-2">Register</button>
+                </form>
+            </div>
+        }
+    </div>
 </div>
-
-<a asp-action="Index" asp-controller="Test">Take another test</a>

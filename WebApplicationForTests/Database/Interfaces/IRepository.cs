@@ -1,4 +1,4 @@
-﻿namespace WebApplicationForTests.Database
+﻿namespace WebApplicationForTests.Database.Interfaces
 {
     public interface IRepository<T> where T : class
     {

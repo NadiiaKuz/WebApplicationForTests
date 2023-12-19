@@ -1,6 +1,6 @@
 ﻿using WebApplicationForTests.Models;
 
-namespace WebApplicationForTests.Database
+namespace WebApplicationForTests.Database.Interfaces
 {
     public interface ITestRepository : IRepository<Test>
     {
